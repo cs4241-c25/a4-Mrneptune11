@@ -1,19 +1,20 @@
+import React from 'react';
+import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
+import Login from './Login';
+import List from './List';
+import EditList from './EditList';
+
 function App() {
   return (
-      <div>
-        <h1>Shopping List Manager</h1>
-        <p id="welcome">Welcome to shopping list manager! Please create login to begin</p>
-        <form id="loginform">
-          <label htmlFor="username"></label>
-          <input type="text" id="username" placeholder="Username"/>
-          <br/>
-          <label htmlFor="password"></label>
-          <input type="text" id="password" placeholder="Password"/>
-          <br/>
-          <button id="loginbutton">log in</button>
-          <button id="signupbutton">sign up</button>
-        </form>
-      </div>
+      <Router>
+          <div>
+              <Routes>
+                  <Route path="/" element={<Login />} />
+                  <Route path="/list" element={<List />} />
+                  <Route path="/editList" element={<EditList />} />
+              </Routes>
+          </div>
+      </Router>
   );
 }
 
