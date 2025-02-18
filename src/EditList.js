@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect, useRef} from 'react';
 import { useNavigate } from 'react-router-dom';
 
 function App() {
@@ -11,13 +11,44 @@ function App() {
     const [itemPrice, setItemPrice] = useState(0);  // Item price input state
     const [itemAmount, setItemAmount] = useState(0);  // Item amount input state
 
+    //reference boolean
+    let listFetched = useRef(false); //if list has already been fetched
+
     // Handle logout
     const logout = () => {
         navigate("/");
     };
 
     //add items to the list
-    const appendItem = () => {
+    const appendItem = async (event) => {
+        event.preventDefault()
+
+        //get information from the inputs
+        const inputName = document.querySelector( "#itemname");
+        const inputPrice = document.querySelector( "#itemprice");
+        const inputAmount = document.querySelector( "#itemamount");
+
+        //store info as a json
+        const json = {name : inputName.value,
+            price : inputPrice.value,
+            amount : inputAmount.value
+        }
+
+        //stringify that json for posting
+        const body = JSON.stringify( json );
+        //post the json to the server
+        const response = await fetch("http://localhost:5000/createitem", {
+            method:'POST',
+            headers: {
+                'Content-Type': 'application/json'  // Specify that the body is JSON
+            },
+            body
+        })
+
+        //response message
+        const text = await response.text()
+        console.log( "text:", text )
+
         if (itemName && itemPrice >= 0 && itemAmount >= 0) {
             const newItem = {
                 id: items.length + 1,  // Unique ID for each item
@@ -46,20 +77,73 @@ function App() {
     const itemAmountChange = (e) => setItemAmount(Number(e.target.value));
 
     //editing items
-    const editItem = (item) => {
+    const editItem = async (item) => {
+
         //front end edit logic
         setItemName(item.name);
         setItemPrice(item.price);
         setItemAmount(item.amount);
         setItems(items.filter(i => i.id !== item.id));
         setTotalCost(totalCost - item.total);
+
+        await deleteItem(item);
     }
 
     //deleting items
-    const deleteItem = (item) => {
+    const deleteItem = async (item) => {
+        //console.log("item id: " + itemId);
+
         setItems(items.filter(i => i.id !== item.id));
         setTotalCost(totalCost - item.total);
+
+        const json = {id: item.id, name: item.name};
+        const body = JSON.stringify(json);
+
+
+        //request to delete item
+        const response = await fetch("http://localhost:5000/deleteitem", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'  // Specify that the body is JSON
+            },
+            body,
+        })
+
+        //response message
+        const text = await response.text()
+        console.log( "text:", text )
     }
+
+    const getList = async () => {
+
+        const response = await fetch("http://localhost:5000/getlist", {
+            method:'GET',
+            headers: {
+                'Content-Type': 'application/json'  // Specify that the body is JSON
+            }
+        })
+
+        const res = await response.json();
+        console.log ("Got Current List" + res);
+
+        let idItems = []; //store items with ids
+
+        for (let i= 0; i < res.items.length; i++){  //add ids to items
+            res.items[i].id = i + 1;
+            idItems.push(res.items[i]);
+        }
+
+        setItems(idItems);
+        setTotalCost(res.totalCost);
+    }
+
+    useEffect(() => {
+
+        if(!listFetched.current) {
+            getList(); //load list state when page opens
+            listFetched.current = true; //list has been fetched
+        }
+    },[]);
 
     return (
         <div>
@@ -111,7 +195,7 @@ function App() {
                     {items.map((item) => (
                         <tr key={item.id}>
                             <td>{item.name}</td>
-                            <td>{item.price.toFixed(2)}</td>
+                            <td>{Number(item.price).toFixed(2)}</td>
                             <td>{item.amount}</td>
                             <td>
                                 <button onClick={() => editItem(item)}>Edit</button>
@@ -126,7 +210,7 @@ function App() {
                     <tbody>
                     <tr>
                         <td>Total Cost($)</td>
-                        <td id="totalcost">{totalCost.toFixed(2)}</td>
+                        <td id="totalcost">{Number(totalCost).toFixed(2)}</td>
                     </tr>
                     </tbody>
                 </table>

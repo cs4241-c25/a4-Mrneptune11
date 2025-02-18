@@ -163,7 +163,8 @@ app.post("/createitem", (req, res) => {
 //route for deleting items from the shopping list
 app.post("/deleteitem", (req, res) => {
     const { id, name } = req.body;
-    list.items.splice(id, 1); //delete item at the given index
+    console.log("Delete id: " + id);
+    list.items.splice(id - 1, 1); //delete item at the given index
     console.log("Item deleted:" + name);
 
     res.json(list);
