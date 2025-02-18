@@ -5,17 +5,40 @@ function App() {
     const navigate = useNavigate();
 
     //state variables for list params
-    const [items, setItems] = useState([]);  // To store the items in the list
-    const [totalCost, setTotalCost] = useState(0);  // To store the total cost
-    const [itemName, setItemName] = useState('');  // Item name input state
-    const [itemPrice, setItemPrice] = useState(0);  // Item price input state
-    const [itemAmount, setItemAmount] = useState(0);  // Item amount input state
+    const [items, setItems] = useState([]);  //the items in the list
+    const [totalCost, setTotalCost] = useState(0);  //store the total cost
+    const [itemName, setItemName] = useState('');  //item name input state
+    const [itemPrice, setItemPrice] = useState(0);  //Item price input state
+    const [itemAmount, setItemAmount] = useState(0);  // item amount input state
+    const [listName, setListName] = useState('List Name');//stores the list name state
 
     //reference boolean
     let listFetched = useRef(false); //if list has already been fetched
 
     // Handle logout
-    const logout = () => {
+    const logout = async (event) => {
+        event.preventDefault();
+
+        const wipeCheck = document.getElementById("wipecheck");
+
+        const json = {};
+        const body = JSON.stringify(json);
+
+        const response = await fetch("http://localhost:5000/logout", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'  // Specify that the body is JSON
+            },
+            body
+        })
+
+        let text = await response.text();
+
+        //check if user wants to save their login info in local storage
+        if (!wipeCheck.checked) {
+            window.localStorage.removeItem("user"); //clear local storage username and password
+            window.localStorage.removeItem("pass");
+        }
         navigate("/");
     };
 
@@ -28,6 +51,11 @@ function App() {
         const inputPrice = document.querySelector( "#itemprice");
         const inputAmount = document.querySelector( "#itemamount");
 
+        if(inputName.value === "" || inputPrice.value === 0 || inputAmount.value === 0) {
+
+            alert("Item needs a name, a price, and an amount");
+            return;
+        }
         //store info as a json
         const json = {name : inputName.value,
             price : inputPrice.value,
@@ -134,6 +162,7 @@ function App() {
         }
 
         setItems(idItems);
+        setListName(res.name);
         setTotalCost(res.totalCost);
     }
 
@@ -144,6 +173,26 @@ function App() {
             listFetched.current = true; //list has been fetched
         }
     },[]);
+
+    let saveList = async function( event ) {
+        event.preventDefault();
+
+        const json = {cost : Number(document.getElementById("totalcost").innerText)};
+        const body = JSON.stringify(json);
+        const text = "Saved List"
+        const response = await fetch("http://localhost:5000/savelist", {
+            method: "POST",
+            headers: {
+                'Content-Type': 'application/json'  // Specify that the body is JSON
+            },
+            body
+        })
+
+        await response.text();
+        console.log( "text:", text );
+
+        alert("List Saved");
+    }
 
     return (
         <div>
@@ -177,7 +226,7 @@ function App() {
                 </div>
 
                 {/* List Name */}
-                <h3 id="listHead">List Name</h3>
+                <h3 id="listHead">{listName}</h3>
 
                 {/* Item List */}
                 <table id="itemlist">
@@ -216,7 +265,7 @@ function App() {
                 </table>
 
                 {/* Save Button */}
-                <button id="savebutton" type="button">Save List</button>
+                <button id="savebutton" type="button" onClick={saveList}>Save List</button>
                 <br />
                 {/* Logout Button */}
                 <button id="logoutButton" className="logout" onClick={logout}>Logout</button>

@@ -39,7 +39,7 @@ let loadData = async function() {
         await dbClient.connect();
         const db = dbClient.db("WebwareC25");
         console.log(db);
-        const coll = db.collection("ShopLists-A4");
+        const coll = db.collection("ShopLists");
         console.log("COLLECTION: \n",coll);
 
         allShopLists = await coll.find().toArray();

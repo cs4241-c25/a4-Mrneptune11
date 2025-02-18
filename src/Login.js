@@ -1,10 +1,11 @@
-import React from 'react';
+import React, {useEffect} from 'react';
 import { useNavigate } from 'react-router-dom';
 
 function App() {
 
     const navigate = useNavigate(); //uses navigate for page routing
 
+    //handle logging in
     const login = async (event) => {
         event.preventDefault();
         const inputUser = document.querySelector( "#username");
@@ -38,6 +39,7 @@ function App() {
         }
     };
 
+    //handle signing up
     const signup = async ( event ) => {
         event.preventDefault();
         const inputUser = document.querySelector( "#username");
@@ -70,6 +72,23 @@ function App() {
             navigate('/list');
         }
     };
+
+    //handle checking local storage
+    const storageCheck = () => {
+        const userInput = document.querySelector("#username");
+        const passInput = document.querySelector("#password");
+
+        //if username and password are in local storage autofill with them
+        if (localStorage.getItem("user") !== null && localStorage.getItem("pass") !== null) {
+            userInput.value = localStorage.getItem("user");
+            passInput.value = localStorage.getItem("pass");
+        }
+    }
+
+    //when window loads
+    useEffect(() => {
+        storageCheck();
+    },[]);
 
     return (
         <div>
