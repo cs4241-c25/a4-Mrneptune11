@@ -17,7 +17,7 @@ function App() {
 
         const body = JSON.stringify( json );
 
-        const response = await fetch("api/server/login", {
+        const response = await fetch("../api/login", {
             method:'POST',
             headers: {
                 'Content-Type': 'application/json'  // Specify that the body is JSON
@@ -51,7 +51,7 @@ function App() {
 
         const body = JSON.stringify( json );
 
-        const response = await fetch("api/server/createuser", {
+        const response = await fetch("../api/createuser", {
             method:'POST',
             headers: {
                 'Content-Type': 'application/json'  // Specify that the body is JSON
