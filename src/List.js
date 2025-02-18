@@ -16,7 +16,7 @@ function App() {
             json = { listname : input.value },
             body = JSON.stringify( json )
 
-        const response = await fetch( "https://a4-sebastian-lanz.vercel.app/createlist", {
+        const response = await fetch( "/api/createlist", {
             method:'POST',
             headers: {
                 'Content-Type': 'application/json'  // Specify that the body is JSON
@@ -32,7 +32,7 @@ function App() {
 
     //gets the current list data for the current user
     const getList = async () => {
-        const response = await fetch("https://a4-sebastian-lanz.vercel.app/getlist", {
+        const response = await fetch("/api/getlist", {
             method: 'GET',
             headers: {
                 'Content-Type': 'application/json'  // body i s a json
