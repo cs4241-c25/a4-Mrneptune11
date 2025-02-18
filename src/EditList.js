@@ -24,7 +24,7 @@ function App() {
         const json = {};
         const body = JSON.stringify(json);
 
-        const response = await fetch("https://a4-sebastian-lanz.vercel.app/logout", {
+        const response = await fetch("http://localhost:5000/logout", {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json'  // Specify that the body is JSON
@@ -65,7 +65,7 @@ function App() {
         //stringify that json for posting
         const body = JSON.stringify( json );
         //post the json to the server
-        const response = await fetch("https://a4-sebastian-lanz.vercel.app/createitem", {
+        const response = await fetch("http://localhost:5000/createitem", {
             method:'POST',
             headers: {
                 'Content-Type': 'application/json'  // Specify that the body is JSON
@@ -129,7 +129,7 @@ function App() {
 
 
         //request to delete item
-        const response = await fetch("https://a4-sebastian-lanz.vercel.app/deleteitem", {
+        const response = await fetch("http://localhost:5000/deleteitem", {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json'  // Specify that the body is JSON
@@ -144,7 +144,7 @@ function App() {
 
     const getList = async () => {
 
-        const response = await fetch("https://a4-sebastian-lanz.vercel.app/getlist", {
+        const response = await fetch("http://localhost:5000/getlist", {
             method:'GET',
             headers: {
                 'Content-Type': 'application/json'  // Specify that the body is JSON
@@ -180,7 +180,7 @@ function App() {
         const json = {cost : Number(document.getElementById("totalcost").innerText)};
         const body = JSON.stringify(json);
         const text = "Saved List"
-        const response = await fetch("https://a4-sebastian-lanz.vercel.app/savelist", {
+        const response = await fetch("http://localhost:5000/savelist", {
             method: "POST",
             headers: {
                 'Content-Type': 'application/json'  // Specify that the body is JSON
